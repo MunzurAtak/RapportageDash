@@ -56,8 +56,7 @@ export default async function DocentPage() {
 
   const students =
     studentLinks
-      ?.map((link) => link.students)
-      .filter((student) => student !== null)
+      ?.flatMap((link) => link.students ?? [])
       .filter(
         (student) =>
           student.status === "active" && student.reporting_required === true
