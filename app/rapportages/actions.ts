@@ -13,8 +13,16 @@ export async function submitReport(formData: FormData) {
   const nextGoals = String(formData.get("nextGoals") ?? "").trim();
   const additionalNotes = String(formData.get("additionalNotes") ?? "").trim();
 
-  if (!studentId || !improvedSkills || !achievedGoals || !nextGoals) {
-    redirect(`/rapportages/${studentId}?error=missing-fields`);
+  const errorUrl = `/rapportages/nieuw?studentId=${studentId}`;
+
+  if (
+    !studentId ||
+    !improvedSkills ||
+    !achievedGoals ||
+    !nextGoals ||
+    !additionalNotes
+  ) {
+    redirect(`${errorUrl}&error=missing-fields`);
   }
 
   const {
@@ -34,7 +42,7 @@ export async function submitReport(formData: FormData) {
     .maybeSingle();
 
   if (!activePeriod) {
-    redirect(`/rapportages/${studentId}?error=no-active-period`);
+    redirect(`${errorUrl}&error=no-active-period`);
   }
 
   const { data: student } = await supabase
@@ -72,7 +80,7 @@ export async function submitReport(formData: FormData) {
     .maybeSingle();
 
   if (existingReport) {
-    redirect(`/rapportages/${studentId}?error=already-submitted`);
+    redirect(`${errorUrl}&error=already-submitted`);
   }
 
   const { error } = await supabase.from("reports").insert({
@@ -82,12 +90,12 @@ export async function submitReport(formData: FormData) {
     improved_skills: improvedSkills,
     achieved_goals: achievedGoals,
     next_goals: nextGoals,
-    additional_notes: additionalNotes || null,
+    additional_notes: additionalNotes,
   });
 
   if (error) {
     console.error(error);
-    redirect(`/rapportages/${studentId}?error=insert-failed`);
+    redirect(`${errorUrl}&error=insert-failed`);
   }
 
   revalidatePath("/docent");
