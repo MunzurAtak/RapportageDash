@@ -318,12 +318,21 @@ export default async function AdminReportsPage({
                     </td>
 
                     <td className="px-6 py-4">
-                      <Link
-                        href={`/admin/reports/${report.id}`}
-                        className="rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm font-medium text-slate-700 hover:bg-slate-50"
-                      >
-                        Bekijken
-                      </Link>
+                      <div className="flex items-center gap-2">
+                        <Link
+                          href={`/admin/reports/${report.id}`}
+                          className="rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm font-medium text-slate-700 hover:bg-slate-50"
+                        >
+                          Bekijken
+                        </Link>
+
+                        <a
+                          href={`/api/reports/${report.id}/pdf`}
+                          className="rounded-lg bg-teal-600 px-3 py-2 text-sm font-medium text-white hover:bg-teal-700"
+                        >
+                          PDF
+                        </a>
+                      </div>
                     </td>
                   </tr>
                 );

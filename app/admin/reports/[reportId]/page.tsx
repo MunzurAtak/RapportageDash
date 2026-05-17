@@ -121,13 +121,20 @@ export default async function AdminReportDetailPage({
       subtitle="Volledige inhoud van de ingediende rapportage."
       userLabel={`${profile.full_name} · ${profile.role}`}
     >
-      <div className="mb-4">
+      <div className="mb-4 flex items-center justify-between gap-4">
         <Link
           href="/admin/reports"
           className="text-sm font-medium text-slate-600"
         >
           ← Terug naar rapportages
         </Link>
+
+        <a
+          href={`/api/reports/${report.id}/pdf`}
+          className="rounded-lg bg-teal-600 px-4 py-2 text-sm font-semibold text-white hover:bg-teal-700"
+        >
+          PDF downloaden
+        </a>
       </div>
 
       <section className="rounded-xl border border-slate-200 bg-white p-6">
