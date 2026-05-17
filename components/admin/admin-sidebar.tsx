@@ -23,7 +23,7 @@ const menuItems = [
     icon: UserPlus,
   },
   {
-    label: "Bijlesdocenten & Personeel",
+    label: "Bijlesdocenten",
     href: "/admin/tutors",
     icon: Users,
   },
@@ -48,35 +48,70 @@ export function AdminSidebar() {
   const pathname = usePathname();
 
   return (
-    <aside className="min-h-screen w-72 bg-teal-600 text-white">
-      <div className="border-b border-teal-500 px-6 py-5">
-        <p className="text-sm font-medium text-teal-100">010 op niveau</p>
-        <h1 className="mt-1 text-lg font-semibold">Adminpaneel</h1>
+    <>
+      {/* Desktop sidebar */}
+      <aside className="hidden min-h-screen w-72 shrink-0 bg-teal-600 text-white lg:block">
+        <div className="border-b border-teal-500 px-6 py-5">
+          <p className="text-sm font-medium text-teal-100">010 op niveau</p>
+          <h1 className="mt-1 text-lg font-semibold">Adminpaneel</h1>
+        </div>
+
+        <nav className="py-3">
+          {menuItems.map((item) => {
+            const Icon = item.icon;
+            const isActive =
+              pathname === item.href ||
+              (item.href !== "/admin" && pathname.startsWith(item.href));
+
+            return (
+              <Link
+                key={item.href}
+                href={item.href}
+                className={`flex items-center gap-3 border-b border-teal-500 px-6 py-4 text-sm font-semibold transition ${
+                  isActive
+                    ? "bg-teal-800 text-white"
+                    : "bg-teal-600 text-teal-50 hover:bg-teal-700"
+                }`}
+              >
+                <Icon className="h-5 w-5" />
+                <span>{item.label}</span>
+              </Link>
+            );
+          })}
+        </nav>
+      </aside>
+
+      {/* Mobile top menu */}
+      <div className="border-b border-teal-700 bg-teal-600 text-white lg:hidden">
+        <div className="px-4 py-4">
+          <p className="text-sm font-medium text-teal-100">010 op niveau</p>
+          <h1 className="text-lg font-semibold">Adminpaneel</h1>
+        </div>
+
+        <nav className="flex gap-2 overflow-x-auto px-4 pb-4">
+          {menuItems.map((item) => {
+            const Icon = item.icon;
+            const isActive =
+              pathname === item.href ||
+              (item.href !== "/admin" && pathname.startsWith(item.href));
+
+            return (
+              <Link
+                key={item.href}
+                href={item.href}
+                className={`flex shrink-0 items-center gap-2 rounded-lg px-3 py-2 text-sm font-semibold ${
+                  isActive
+                    ? "bg-teal-800 text-white"
+                    : "bg-teal-500 text-teal-50"
+                }`}
+              >
+                <Icon className="h-4 w-4" />
+                <span>{item.label}</span>
+              </Link>
+            );
+          })}
+        </nav>
       </div>
-
-      <nav className="py-3">
-        {menuItems.map((item) => {
-          const Icon = item.icon;
-          const isActive =
-            pathname === item.href ||
-            (item.href !== "/admin" && pathname.startsWith(item.href));
-
-          return (
-            <Link
-              key={item.href}
-              href={item.href}
-              className={`flex items-center gap-3 border-b border-teal-500 px-6 py-4 text-sm font-semibold transition ${
-                isActive
-                  ? "bg-teal-800 text-white"
-                  : "bg-teal-600 text-teal-50 hover:bg-teal-700"
-              }`}
-            >
-              <Icon className="h-5 w-5" />
-              <span>{item.label}</span>
-            </Link>
-          );
-        })}
-      </nav>
-    </aside>
+    </>
   );
 }

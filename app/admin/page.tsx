@@ -207,16 +207,56 @@ export default async function AdminPage() {
           </p>
         </div>
 
-        <div className="overflow-x-auto">
+        {/* Mobile cards */}
+        <div className="divide-y divide-slate-200 bg-white md:hidden">
+          {!activePeriod && (
+            <div className="px-6 py-5 text-sm text-slate-500">
+              Er is geen actieve periode ingesteld.
+            </div>
+          )}
+
+          {activePeriod && missingReports.length === 0 && (
+            <div className="px-6 py-5 text-sm text-slate-500">
+              Er ontbreken geen rapportages.
+            </div>
+          )}
+
+          {activePeriod &&
+            missingReports.map((item) => (
+              <div key={`${item.studentId}:${item.tutorId}`} className="px-6 py-5">
+                <p className="font-semibold text-slate-900">
+                  {item.student?.full_name}
+                </p>
+
+                <dl className="mt-3 space-y-2 text-sm">
+                  <div>
+                    <dt className="text-slate-500">Leerjaar</dt>
+                    <dd className="text-slate-900">
+                      {item.student?.grade_level ?? "-"}
+                    </dd>
+                  </div>
+
+                  <div>
+                    <dt className="text-slate-500">Verantwoordelijke docent</dt>
+                    <dd className="text-slate-900">{item.tutor?.full_name}</dd>
+                  </div>
+
+                  <div>
+                    <dt className="text-slate-500">E-mailadres docent</dt>
+                    <dd className="break-all text-slate-900">{item.tutor?.email}</dd>
+                  </div>
+                </dl>
+              </div>
+            ))}
+        </div>
+
+        {/* Desktop table */}
+        <div className="hidden overflow-x-auto md:block">
           <table className="w-full border-collapse text-left text-sm">
             <thead className="bg-slate-50">
               <tr>
-                <th className="px-6 py-3 font-medium text-slate-600">
-                  Leerling
-                </th>
-                <th className="px-6 py-3 font-medium text-slate-600">
-                  Leerjaar
-                </th>
+                <th className="px-6 py-3 font-medium text-slate-600">Leerling</th>
+                <th className="px-6 py-3 font-medium text-slate-600">Leerjaar</th>
                 <th className="px-6 py-3 font-medium text-slate-600">
                   Verantwoordelijke docent
                 </th>

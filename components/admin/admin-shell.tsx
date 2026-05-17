@@ -16,12 +16,12 @@ export function AdminShell({
   userLabel,
 }: AdminShellProps) {
   return (
-    <main className="flex min-h-screen bg-slate-100">
+    <main className="min-h-screen bg-slate-100 lg:flex">
       <AdminSidebar />
 
       <div className="flex min-w-0 flex-1 flex-col">
         <header className="border-b border-slate-200 bg-white">
-          <div className="flex items-center justify-between px-8 py-4">
+          <div className="flex flex-col gap-4 px-4 py-4 sm:px-6 lg:flex-row lg:items-center lg:justify-between lg:px-8">
             <div>
               <h1 className="text-xl font-semibold text-slate-900">{title}</h1>
               {subtitle && (
@@ -29,14 +29,16 @@ export function AdminShell({
               )}
             </div>
 
-            <div className="flex items-center gap-4">
+            <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between lg:justify-end">
               <p className="text-sm text-slate-600">{userLabel}</p>
               <LogoutButton />
             </div>
           </div>
         </header>
 
-        <div className="flex-1 px-8 py-8">{children}</div>
+        <div className="flex-1 px-4 py-5 sm:px-6 lg:px-8 lg:py-8">
+          {children}
+        </div>
       </div>
     </main>
   );
