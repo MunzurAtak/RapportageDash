@@ -83,3 +83,39 @@ export async function createTutor(formData: FormData) {
   revalidatePath("/admin/tutors");
   redirect("/admin/tutors");
 }
+
+export async function updateTutor(formData: FormData) {
+  const { supabase } = await requireAdmin();
+
+  const tutorId = String(formData.get("tutorId") ?? "");
+  const fullName = String(formData.get("fullName") ?? "").trim();
+  const role = String(formData.get("role") ?? "tutor");
+  const active = formData.get("active") === "on";
+
+  if (!tutorId || !fullName || !role) {
+    redirect(`/admin/tutors/${tutorId}/edit?error=missing-fields`);
+  }
+
+  if (!["tutor", "coordinator", "admin"].includes(role)) {
+    redirect(`/admin/tutors/${tutorId}/edit?error=invalid-role`);
+  }
+
+  const { error } = await supabase
+    .from("profiles")
+    .update({
+      full_name: fullName,
+      role,
+      active,
+    })
+    .eq("id", tutorId);
+
+  if (error) {
+    console.error(error);
+    redirect(`/admin/tutors/${tutorId}/edit?error=update-failed`);
+  }
+
+  revalidatePath("/admin/tutors");
+  revalidatePath("/admin/students");
+  revalidatePath("/docent");
+  redirect("/admin/tutors");
+}
