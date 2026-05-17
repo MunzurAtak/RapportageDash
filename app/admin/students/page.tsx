@@ -31,6 +31,18 @@ function single<T>(value: T | T[] | null): T | null {
   return value;
 }
 
+function StatusBadge({ active }: { active: boolean }) {
+  return active ? (
+    <span className="rounded-full bg-green-50 px-3 py-1 text-xs font-medium text-green-700">
+      Actief
+    </span>
+  ) : (
+    <span className="rounded-full bg-slate-100 px-3 py-1 text-xs font-medium text-slate-600">
+      Inactief
+    </span>
+  );
+}
+
 export default async function AdminStudentsPage() {
   const supabase = await createClient();
 
@@ -92,7 +104,7 @@ export default async function AdminStudentsPage() {
       userLabel={`${profile.full_name} · ${profile.role}`}
     >
       <section className="rounded-xl border border-slate-200 bg-white">
-        <div className="flex items-center justify-between border-b border-slate-200 px-6 py-5">
+        <div className="flex flex-col gap-4 border-b border-slate-200 px-4 py-5 sm:px-6 md:flex-row md:items-center md:justify-between">
           <div>
             <h2 className="text-lg font-semibold text-slate-900">
               Alle leerlingen
@@ -104,19 +116,105 @@ export default async function AdminStudentsPage() {
 
           <Link
             href="/admin/students/new"
-            className="rounded-lg bg-teal-600 px-4 py-2 text-sm font-semibold text-white hover:bg-teal-700"
+            className="inline-flex w-full justify-center rounded-lg bg-teal-600 px-4 py-2.5 text-sm font-semibold text-white hover:bg-teal-700 sm:w-auto"
           >
             + Nieuw toevoegen
           </Link>
         </div>
 
         {error && (
-          <div className="m-6 rounded-lg bg-red-50 px-4 py-3 text-sm text-red-700">
+          <div className="m-4 rounded-lg bg-red-50 px-4 py-3 text-sm text-red-700 sm:m-6">
             Leerlingen konden niet worden opgehaald.
           </div>
         )}
 
-        <div className="overflow-x-auto">
+        {/* Mobile cards */}
+        <div className="divide-y divide-slate-200 bg-white md:hidden">
+          {students.length === 0 && (
+            <div className="px-4 py-5 text-sm text-slate-500">
+              Er zijn nog geen leerlingen toegevoegd.
+            </div>
+          )}
+
+          {students.map((student) => {
+            const tutors = student.student_tutors
+              .map((link) => {
+                const tutor = single(link.profiles);
+                if (!tutor) return null;
+
+                return {
+                  ...tutor,
+                  isResponsible: link.is_responsible,
+                };
+              })
+              .filter((tutor) => tutor !== null);
+
+            return (
+              <div key={student.id} className="px-4 py-5">
+                <div className="flex items-start justify-between gap-3">
+                  <div>
+                    <p className="font-semibold text-slate-900">
+                      {student.full_name}
+                    </p>
+                    <p className="mt-1 text-sm text-slate-500">
+                      {student.grade_level ?? "Geen leerjaar"}
+                    </p>
+                  </div>
+
+                  <StatusBadge active={student.status === "active"} />
+                </div>
+
+                <dl className="mt-4 space-y-3 text-sm">
+                  <div>
+                    <dt className="text-slate-500">Rapportageplicht</dt>
+                    <dd className="text-slate-900">
+                      {student.reporting_required ? "Ja" : "Nee"}
+                    </dd>
+                  </div>
+
+                  <div>
+                    <dt className="text-slate-500">
+                      Toegewezen bijlesdocenten
+                    </dt>
+                    <dd className="mt-1 text-slate-900">
+                      {tutors.length === 0 ? (
+                        <span className="text-slate-400">Geen docent</span>
+                      ) : (
+                        <div className="space-y-2">
+                          {tutors.map((tutor) => (
+                            <div key={tutor.id}>
+                              <div>{tutor.full_name}</div>
+                              <div className="break-all text-xs text-slate-400">
+                                {tutor.email}
+                              </div>
+                              {tutor.isResponsible && (
+                                <span className="mt-1 inline-flex rounded-full bg-teal-50 px-2 py-0.5 text-xs font-medium text-teal-700">
+                                  verantwoordelijk
+                                </span>
+                              )}
+                            </div>
+                          ))}
+                        </div>
+                      )}
+                    </dd>
+                  </div>
+                </dl>
+
+                <div className="mt-4">
+                  <Link
+                    href={`/admin/students/${student.id}/edit`}
+                    className="inline-flex w-full justify-center rounded-lg border border-slate-300 bg-white px-3 py-2.5 text-sm font-medium text-slate-700 hover:bg-slate-50"
+                  >
+                    Bewerken
+                  </Link>
+                </div>
+              </div>
+            );
+          })}
+        </div>
+
+        {/* Desktop table */}
+        <div className="hidden overflow-x-auto md:block">
           <table className="w-full border-collapse text-left text-sm">
             <thead className="bg-slate-50">
               <tr>
@@ -174,15 +272,7 @@ export default async function AdminStudentsPage() {
                     </td>
 
                     <td className="px-6 py-4">
-                      {student.status === "active" ? (
-                        <span className="rounded-full bg-green-50 px-3 py-1 text-xs font-medium text-green-700">
-                          Actief
-                        </span>
-                      ) : (
-                        <span className="rounded-full bg-slate-100 px-3 py-1 text-xs font-medium text-slate-600">
-                          Inactief
-                        </span>
-                      )}
+                      <StatusBadge active={student.status === "active"} />
                     </td>
 
                     <td className="px-6 py-4 text-slate-600">
