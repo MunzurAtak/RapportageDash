@@ -42,13 +42,27 @@ export default function LoginPage() {
 
     const { data: profile, error: profileError } = await supabase
       .from("profiles")
-      .select("role")
+      .select("role, active, approved")
       .eq("id", user.id)
       .single();
 
     if (profileError || !profile) {
       setErrorMessage("Geen profiel gevonden voor deze gebruiker.");
       setLoading(false);
+      return;
+    }
+
+    if (!profile.approved) {
+      await supabase.auth.signOut();
+      router.push("/account-inactief?reason=pending");
+      router.refresh();
+      return;
+    }
+
+    if (!profile.active) {
+      await supabase.auth.signOut();
+      router.push("/account-inactief?reason=inactive");
+      router.refresh();
       return;
     }
 
