@@ -148,12 +148,12 @@ export default async function AdminReportsPage({
       subtitle="Bekijk en filter alle ingediende rapportages per leerling, docent en periode."
       userLabel={`${profile.full_name} · ${profile.role}`}
     >
-      <section className="mb-6 rounded-xl border border-slate-200 bg-white p-6">
+      <section className="mb-6 rounded-xl border border-slate-200 bg-white p-4 sm:p-6">
         <h2 className="text-lg font-semibold text-slate-900">
           Filters
         </h2>
 
-        <form className="mt-5 grid gap-4 md:grid-cols-4">
+        <form className="mt-5 grid gap-4 lg:grid-cols-4">
           <div>
             <label className="block text-sm font-medium text-slate-700">
               Periode
@@ -208,17 +208,17 @@ export default async function AdminReportsPage({
             </select>
           </div>
 
-          <div className="flex items-end gap-3">
+          <div className="flex flex-col gap-3 sm:flex-row sm:items-end">
             <button
               type="submit"
-              className="rounded-lg bg-teal-600 px-4 py-2.5 text-sm font-semibold text-white hover:bg-teal-700"
+              className="w-full rounded-lg bg-teal-600 px-4 py-2.5 text-sm font-semibold text-white hover:bg-teal-700 sm:w-auto"
             >
               Filteren
             </button>
 
             <Link
               href="/admin/reports"
-              className="rounded-lg border border-slate-300 bg-white px-4 py-2.5 text-sm font-medium text-slate-700 hover:bg-slate-50"
+              className="inline-flex w-full justify-center rounded-lg border border-slate-300 bg-white px-4 py-2.5 text-sm font-medium text-slate-700 hover:bg-slate-50 sm:w-auto"
             >
               Reset
             </Link>
@@ -244,28 +244,95 @@ export default async function AdminReportsPage({
           </div>
         )}
 
-        <div className="overflow-x-auto">
+        {/* Mobile cards */}
+        <div className="divide-y divide-slate-200 bg-white md:hidden">
+          {reports.length === 0 && (
+            <div className="px-4 py-5 text-sm text-slate-500">
+              Geen rapportages gevonden voor deze filters.
+            </div>
+          )}
+
+          {reports.map((report) => {
+            const student = single(report.students);
+            const tutor = single(report.profiles);
+            const period = single(report.report_periods);
+
+            return (
+              <div key={report.id} className="px-4 py-5">
+                <div className="flex items-start justify-between gap-3">
+                  <div>
+                    <p className="font-semibold text-slate-900">
+                      {student?.full_name ?? "Onbekende leerling"}
+                    </p>
+                    <p className="mt-1 text-sm text-slate-500">
+                      {period?.name ?? "-"}
+                    </p>
+                  </div>
+                </div>
+
+                <dl className="mt-4 space-y-3 text-sm">
+                  <div>
+                    <dt className="text-slate-500">Leerjaar</dt>
+                    <dd className="text-slate-900">{student?.grade_level ?? "-"}</dd>
+                  </div>
+
+                  <div>
+                    <dt className="text-slate-500">Ingevuld door</dt>
+                    <dd className="text-slate-900">{tutor?.full_name ?? "-"}</dd>
+                    <dd className="break-all text-xs text-slate-400">
+                      {tutor?.email ?? ""}
+                    </dd>
+                  </div>
+
+                  <div>
+                    <dt className="text-slate-500">Ingediend op</dt>
+                    <dd className="text-slate-900">
+                      {new Date(report.submitted_at).toLocaleDateString("nl-NL", {
+                        day: "2-digit",
+                        month: "2-digit",
+                        year: "numeric",
+                        hour: "2-digit",
+                        minute: "2-digit",
+                      })}
+                    </dd>
+                  </div>
+                </dl>
+
+                <div className="mt-4 grid grid-cols-2 gap-2">
+                  <Link
+                    href={`/admin/reports/${report.id}`}
+                    className="inline-flex justify-center rounded-lg border border-slate-300 bg-white px-3 py-2.5 text-sm font-medium text-slate-700 hover:bg-slate-50"
+                  >
+                    Bekijken
+                  </Link>
+
+                  <a
+                    href={`/api/reports/${report.id}/pdf`}
+                    className="inline-flex justify-center rounded-lg bg-teal-600 px-3 py-2.5 text-sm font-medium text-white hover:bg-teal-700"
+                  >
+                    PDF
+                  </a>
+                </div>
+              </div>
+            );
+          })}
+        </div>
+
+        {/* Desktop table */}
+        <div className="hidden overflow-x-auto md:block">
           <table className="w-full border-collapse text-left text-sm">
             <thead className="bg-slate-50">
               <tr>
-                <th className="px-6 py-3 font-medium text-slate-600">
-                  Leerling
-                </th>
-                <th className="px-6 py-3 font-medium text-slate-600">
-                  Leerjaar
-                </th>
+                <th className="px-6 py-3 font-medium text-slate-600">Leerling</th>
+                <th className="px-6 py-3 font-medium text-slate-600">Leerjaar</th>
                 <th className="px-6 py-3 font-medium text-slate-600">
                   Ingevuld door
                 </th>
-                <th className="px-6 py-3 font-medium text-slate-600">
-                  Periode
-                </th>
+                <th className="px-6 py-3 font-medium text-slate-600">Periode</th>
                 <th className="px-6 py-3 font-medium text-slate-600">
                   Ingediend op
                 </th>
-                <th className="px-6 py-3 font-medium text-slate-600">
-                  Actie
-                </th>
+                <th className="px-6 py-3 font-medium text-slate-600">Actie</th>
               </tr>
             </thead>
 
@@ -305,16 +372,13 @@ export default async function AdminReportsPage({
                     </td>
 
                     <td className="px-6 py-4 text-slate-600">
-                      {new Date(report.submitted_at).toLocaleDateString(
-                        "nl-NL",
-                        {
-                          day: "2-digit",
-                          month: "2-digit",
-                          year: "numeric",
-                          hour: "2-digit",
-                          minute: "2-digit",
-                        }
-                      )}
+                      {new Date(report.submitted_at).toLocaleDateString("nl-NL", {
+                        day: "2-digit",
+                        month: "2-digit",
+                        year: "numeric",
+                        hour: "2-digit",
+                        minute: "2-digit",
+                      })}
                     </td>
 
                     <td className="px-6 py-4">
