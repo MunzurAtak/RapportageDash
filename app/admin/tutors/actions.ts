@@ -1,0 +1,85 @@
+"use server";
+
+import { revalidatePath } from "next/cache";
+import { redirect } from "next/navigation";
+import { createClient } from "@/lib/supabase/server";
+import { createAdminClient } from "@/lib/supabase/admin";
+
+async function requireAdmin() {
+  const supabase = await createClient();
+
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  if (!user) {
+    redirect("/login");
+  }
+
+  const { data: profile } = await supabase
+    .from("profiles")
+    .select("role")
+    .eq("id", user.id)
+    .single();
+
+  if (!profile || (profile.role !== "admin" && profile.role !== "coordinator")) {
+    redirect("/docent");
+  }
+
+  return { supabase, user };
+}
+
+export async function createTutor(formData: FormData) {
+  await requireAdmin();
+
+  const adminClient = createAdminClient();
+
+  const fullName = String(formData.get("fullName") ?? "").trim();
+  const email = String(formData.get("email") ?? "").trim().toLowerCase();
+  const password = String(formData.get("password") ?? "");
+  const role = String(formData.get("role") ?? "tutor");
+  const active = formData.get("active") === "on";
+
+  if (!fullName || !email || !password || !role) {
+    redirect("/admin/tutors/new?error=missing-fields");
+  }
+
+  if (!["tutor", "coordinator", "admin"].includes(role)) {
+    redirect("/admin/tutors/new?error=invalid-role");
+  }
+
+  const { data: createdUser, error: createUserError } =
+    await adminClient.auth.admin.createUser({
+      email,
+      password,
+      email_confirm: true,
+      user_metadata: {
+        full_name: fullName,
+      },
+    });
+
+  if (createUserError || !createdUser.user) {
+    console.error(createUserError);
+    redirect("/admin/tutors/new?error=create-user-failed");
+  }
+
+  const { error: profileError } = await adminClient
+    .from("profiles")
+    .update({
+      full_name: fullName,
+      email,
+      role,
+      active,
+      approved: true,
+      approved_at: new Date().toISOString(),
+    })
+    .eq("id", createdUser.user.id);
+
+  if (profileError) {
+    console.error(profileError);
+    redirect("/admin/tutors/new?error=profile-update-failed");
+  }
+
+  revalidatePath("/admin/tutors");
+  redirect("/admin/tutors");
+}
