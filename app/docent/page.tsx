@@ -76,6 +76,7 @@ export default async function DocentPage() {
         .select("student_id")
         .eq("tutor_id", user.id)
         .eq("period_id", activePeriod.id)
+        .is("deleted_at", null)
     : { data: [] };
 
   const submittedStudentIds = new Set(

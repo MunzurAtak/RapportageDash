@@ -2,6 +2,7 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { AdminShell } from "@/components/admin/admin-shell";
+import { archiveReport } from "../actions";
 
 type ReportDetailPageProps = {
   params: Promise<{
@@ -84,6 +85,7 @@ export default async function AdminReportDetailPage({
     .select(`
       id,
       submitted_at,
+      deleted_at,
       improved_skills,
       achieved_goals,
       next_goals,
@@ -92,7 +94,7 @@ export default async function AdminReportDetailPage({
         full_name,
         grade_level
       ),
-      profiles (
+      profiles!reports_tutor_id_fkey (
         full_name,
         email
       ),
@@ -101,6 +103,7 @@ export default async function AdminReportDetailPage({
       )
     `)
     .eq("id", reportId)
+    .is("deleted_at", null)
     .single();
 
   if (!data) {
@@ -207,6 +210,26 @@ export default async function AdminReportDetailPage({
               {report.additional_notes ?? "-"}
             </p>
           </div>
+        </div>
+
+        <div className="mt-8 border-t border-slate-200 pt-6">
+          <h3 className="text-sm font-semibold text-red-700">
+            Rapportage verwijderen
+          </h3>
+          <p className="mt-1 text-sm text-slate-600">
+            Deze rapportage wordt gearchiveerd en verdwijnt uit het normale overzicht.
+            De data wordt niet direct definitief verwijderd.
+          </p>
+
+          <form action={archiveReport} className="mt-4">
+            <input type="hidden" name="reportId" value={report.id} />
+            <button
+              type="submit"
+              className="rounded-lg bg-red-600 px-4 py-2.5 text-sm font-semibold text-white hover:bg-red-700"
+            >
+              Rapportage verwijderen
+            </button>
+          </form>
         </div>
       </section>
     </AdminShell>

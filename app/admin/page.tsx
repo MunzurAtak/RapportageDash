@@ -124,6 +124,7 @@ export default async function AdminPage() {
         .from("reports")
         .select("student_id, tutor_id")
         .eq("period_id", activePeriod.id)
+        .is("deleted_at", null)
     : { data: [] };
 
   const submittedReports = (submittedReportsData ?? []) as SubmittedReport[];

@@ -79,7 +79,7 @@ export default async function AdminReportsPage() {
         full_name,
         grade_level
       ),
-      profiles (
+      profiles!reports_tutor_id_fkey (
         id,
         full_name,
         email
@@ -89,6 +89,7 @@ export default async function AdminReportsPage() {
         name
       )
     `)
+    .is("deleted_at", null)
     .order("submitted_at", { ascending: false });
 
   const reports = (data ?? []) as unknown as RawReport[];

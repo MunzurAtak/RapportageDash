@@ -99,6 +99,7 @@ export async function submitReport(formData: FormData) {
     .eq("student_id", studentId)
     .eq("tutor_id", user.id)
     .eq("period_id", activePeriod.id)
+    .is("deleted_at", null)
     .maybeSingle();
 
   if (existingReport) {
