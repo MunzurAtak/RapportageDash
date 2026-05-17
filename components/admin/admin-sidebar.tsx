@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { ClipboardList, GraduationCap, Home, Users } from "lucide-react";
+import { CalendarDays, ClipboardList, GraduationCap, Home, Users } from "lucide-react";
 
 const menuItems = [
   {
@@ -19,6 +19,11 @@ const menuItems = [
     label: "Leerlingen",
     href: "/admin/students",
     icon: GraduationCap,
+  },
+  {
+    label: "Periodes",
+    href: "/admin/periods",
+    icon: CalendarDays,
   },
   {
     label: "Rapportages",
