@@ -2,7 +2,7 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { AdminShell } from "@/components/admin/admin-shell";
-import { updateTutor } from "../../actions";
+import { archiveTutor, updateTutor } from "../../actions";
 
 type EditTutorPageProps = {
   params: Promise<{
@@ -52,6 +52,14 @@ function getErrorMessage(error?: string) {
 
   if (error === "update-failed") {
     return "Docentgegevens konden niet worden bijgewerkt.";
+  }
+
+  if (error === "archive-failed") {
+    return "Bijlesdocent kon niet worden gearchiveerd.";
+  }
+
+  if (error === "cannot-archive-self") {
+    return "Je kunt je eigen adminaccount niet archiveren.";
   }
 
   return null;
@@ -225,6 +233,27 @@ export default async function EditTutorPage({
               Wijzigingen opslaan
             </button>
           </form>
+
+          <div className="mt-8 border-t border-slate-200 pt-6">
+            <h3 className="text-sm font-semibold text-red-700">
+              Bijlesdocent archiveren
+            </h3>
+            <p className="mt-1 text-sm text-slate-600">
+              Deze bijlesdocent wordt op inactief gezet. Het account kan daarna niet meer
+              inloggen en verschijnt niet meer in actieve docent-dropdowns. Oude
+              rapportages blijven bewaard.
+            </p>
+
+            <form action={archiveTutor} className="mt-4">
+              <input type="hidden" name="tutorId" value={tutor.id} />
+              <button
+                type="submit"
+                className="rounded-lg bg-red-600 px-4 py-2.5 text-sm font-semibold text-white hover:bg-red-700"
+              >
+                Bijlesdocent archiveren
+              </button>
+            </form>
+          </div>
         </section>
 
         <section className="rounded-xl border border-slate-200 bg-white p-6">

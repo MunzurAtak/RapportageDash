@@ -14,6 +14,7 @@ type RelatedTutor = {
   id: string;
   full_name: string;
   email: string;
+  active: boolean;
 };
 
 type ExpectedReportLink = {
@@ -94,7 +95,8 @@ export default async function AdminPage() {
       profiles (
         id,
         full_name,
-        email
+        email,
+        active
       )
     `)
     .eq("is_responsible", true);
@@ -115,6 +117,7 @@ export default async function AdminPage() {
       (item) =>
         item.student &&
         item.tutor &&
+        item.tutor.active === true &&
         item.student.status === "active" &&
         item.student.reporting_required === true
     );

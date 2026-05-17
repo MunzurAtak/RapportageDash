@@ -131,3 +131,35 @@ export async function updateTutor(formData: FormData) {
   revalidatePath("/docent");
   redirect("/admin/tutors");
 }
+
+export async function archiveTutor(formData: FormData) {
+  const { supabase, user } = await requireAdmin();
+
+  const tutorId = String(formData.get("tutorId") ?? "");
+
+  if (!tutorId) {
+    redirect("/admin/tutors?error=missing-tutor");
+  }
+
+  if (tutorId === user.id) {
+    redirect(`/admin/tutors/${tutorId}/edit?error=cannot-archive-self`);
+  }
+
+  const { error } = await supabase
+    .from("profiles")
+    .update({
+      active: false,
+    })
+    .eq("id", tutorId);
+
+  if (error) {
+    console.error(error);
+    redirect(`/admin/tutors/${tutorId}/edit?error=archive-failed`);
+  }
+
+  revalidatePath("/admin");
+  revalidatePath("/admin/tutors");
+  revalidatePath("/admin/students");
+  revalidatePath("/docent");
+  redirect("/admin/tutors");
+}
