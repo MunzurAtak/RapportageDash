@@ -4,6 +4,8 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import {
   CalendarDays,
+  ChevronLeft,
+  ChevronRight,
   ClipboardList,
   GraduationCap,
   Home,
@@ -50,14 +52,45 @@ const menuItems = [
 export function AdminSidebar() {
   const pathname = usePathname();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [desktopExpanded, setDesktopExpanded] = useState(false);
 
   return (
     <>
-      {/* Desktop sidebar */}
-      <aside className="hidden min-h-screen w-72 shrink-0 bg-teal-600 text-white lg:block">
-        <div className="border-b border-teal-500 px-6 py-5">
-          <p className="text-sm font-medium text-teal-100">010 op niveau</p>
-          <h1 className="mt-1 text-lg font-semibold">Adminpaneel</h1>
+      {/* Desktop collapsible sidebar */}
+      <aside
+        className={`hidden min-h-screen shrink-0 bg-teal-600 text-white transition-all duration-200 lg:block ${
+          desktopExpanded ? "w-72" : "w-20"
+        }`}
+      >
+        <div className="border-b border-teal-500 px-4 py-5">
+          <div className="flex items-center justify-between gap-3">
+            {desktopExpanded ? (
+              <div>
+                <p className="text-sm font-medium text-teal-100">
+                  010 op niveau
+                </p>
+                <h1 className="mt-1 text-lg font-semibold">Adminpaneel</h1>
+              </div>
+            ) : (
+              <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-teal-800 text-sm font-bold">
+                010
+              </div>
+            )}
+
+            <button
+              type="button"
+              onClick={() => setDesktopExpanded((value) => !value)}
+              className="rounded-lg bg-teal-800 p-2 text-white hover:bg-teal-900"
+              aria-label={desktopExpanded ? "Menu inklappen" : "Menu uitklappen"}
+              title={desktopExpanded ? "Menu inklappen" : "Menu uitklappen"}
+            >
+              {desktopExpanded ? (
+                <ChevronLeft className="h-4 w-4" />
+              ) : (
+                <ChevronRight className="h-4 w-4" />
+              )}
+            </button>
+          </div>
         </div>
 
         <nav className="py-3">
@@ -71,14 +104,15 @@ export function AdminSidebar() {
               <Link
                 key={item.href}
                 href={item.href}
-                className={`flex items-center gap-3 border-b border-teal-500 px-6 py-4 text-sm font-semibold transition ${
+                title={item.label}
+                className={`flex items-center gap-3 border-b border-teal-500 px-5 py-4 text-sm font-semibold transition ${
                   isActive
                     ? "bg-teal-800 text-white"
                     : "bg-teal-600 text-teal-50 hover:bg-teal-700"
-                }`}
+                } ${desktopExpanded ? "justify-start" : "justify-center"}`}
               >
-                <Icon className="h-5 w-5" />
-                <span>{item.label}</span>
+                <Icon className="h-5 w-5 shrink-0" />
+                {desktopExpanded && <span>{item.label}</span>}
               </Link>
             );
           })}
