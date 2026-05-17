@@ -141,3 +141,31 @@ export async function updateStudent(formData: FormData) {
   revalidatePath("/docent");
   redirect("/admin/students");
 }
+
+export async function archiveStudent(formData: FormData) {
+  const supabase = await requireAdmin();
+
+  const studentId = String(formData.get("studentId") ?? "");
+
+  if (!studentId) {
+    redirect("/admin/students?error=missing-student");
+  }
+
+  const { error } = await supabase
+    .from("students")
+    .update({
+      status: "inactive",
+      reporting_required: false,
+    })
+    .eq("id", studentId);
+
+  if (error) {
+    console.error(error);
+    redirect(`/admin/students/${studentId}/edit?error=archive-failed`);
+  }
+
+  revalidatePath("/admin");
+  revalidatePath("/admin/students");
+  revalidatePath("/docent");
+  redirect("/admin/students");
+}

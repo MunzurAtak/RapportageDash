@@ -2,7 +2,7 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { AdminShell } from "@/components/admin/admin-shell";
-import { updateStudent } from "../../actions";
+import { archiveStudent, updateStudent } from "../../actions";
 
 type EditStudentPageProps = {
   params: Promise<{
@@ -52,6 +52,10 @@ function getErrorMessage(error?: string) {
 
   if (error === "link-update-failed") {
     return "Docentkoppeling kon niet worden bijgewerkt.";
+  }
+
+  if (error === "archive-failed") {
+    return "Leerling kon niet worden gearchiveerd.";
   }
 
   return null;
@@ -245,6 +249,26 @@ export default async function EditStudentPage({
             Wijzigingen opslaan
           </button>
         </form>
+
+        <div className="mt-8 border-t border-slate-200 pt-6">
+          <h3 className="text-sm font-semibold text-red-700">
+            Leerling archiveren
+          </h3>
+          <p className="mt-1 text-sm text-slate-600">
+            Deze leerling wordt op inactief gezet en telt niet meer mee voor
+            rapportages. Oude rapportages blijven bewaard.
+          </p>
+
+          <form action={archiveStudent} className="mt-4">
+            <input type="hidden" name="studentId" value={student.id} />
+            <button
+              type="submit"
+              className="rounded-lg bg-red-600 px-4 py-2.5 text-sm font-semibold text-white hover:bg-red-700"
+            >
+              Leerling archiveren
+            </button>
+          </form>
+        </div>
       </section>
     </AdminShell>
   );
