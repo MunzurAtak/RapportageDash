@@ -44,12 +44,20 @@ export default async function NewTutorPage({ searchParams }: NewTutorPageProps) 
 
   const { data: profile } = await supabase
     .from("profiles")
-    .select("full_name, role")
+    .select("full_name, role, active, approved")
     .eq("id", user.id)
     .single();
 
   if (!profile) {
     redirect("/login");
+  }
+
+  if (!profile.approved) {
+    redirect("/account-inactief?reason=pending");
+  }
+
+  if (!profile.active) {
+    redirect("/account-inactief?reason=inactive");
   }
 
   if (profile.role !== "admin" && profile.role !== "coordinator") {

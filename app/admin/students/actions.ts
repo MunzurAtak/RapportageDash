@@ -17,11 +17,23 @@ async function requireAdmin() {
 
   const { data: profile } = await supabase
     .from("profiles")
-    .select("role")
+    .select("role, active, approved")
     .eq("id", user.id)
     .single();
 
-  if (!profile || (profile.role !== "admin" && profile.role !== "coordinator")) {
+  if (!profile) {
+    redirect("/login");
+  }
+
+  if (!profile.approved) {
+    redirect("/account-inactief?reason=pending");
+  }
+
+  if (!profile.active) {
+    redirect("/account-inactief?reason=inactive");
+  }
+
+  if (profile.role !== "admin" && profile.role !== "coordinator") {
     redirect("/docent");
   }
 
