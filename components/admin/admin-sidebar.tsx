@@ -7,9 +7,12 @@ import {
   ClipboardList,
   GraduationCap,
   Home,
+  Menu,
   UserPlus,
   Users,
+  X,
 } from "lucide-react";
+import { useState } from "react";
 
 const menuItems = [
   {
@@ -46,6 +49,7 @@ const menuItems = [
 
 export function AdminSidebar() {
   const pathname = usePathname();
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   return (
     <>
@@ -81,36 +85,59 @@ export function AdminSidebar() {
         </nav>
       </aside>
 
-      {/* Mobile top menu */}
+      {/* Mobile collapsed menu */}
       <div className="border-b border-teal-700 bg-teal-600 text-white lg:hidden">
-        <div className="px-4 py-4">
-          <p className="text-sm font-medium text-teal-100">010 op niveau</p>
-          <h1 className="text-lg font-semibold">Adminpaneel</h1>
+        <div className="flex items-center justify-between px-4 py-4">
+          <div>
+            <p className="text-sm font-medium text-teal-100">010 op niveau</p>
+            <h1 className="text-lg font-semibold">Adminpaneel</h1>
+          </div>
+
+          <button
+            type="button"
+            onClick={() => setMobileMenuOpen((value) => !value)}
+            className="inline-flex items-center gap-2 rounded-lg bg-teal-800 px-3 py-2 text-sm font-semibold text-white"
+          >
+            {mobileMenuOpen ? (
+              <>
+                <X className="h-4 w-4" />
+                Sluiten
+              </>
+            ) : (
+              <>
+                <Menu className="h-4 w-4" />
+                Menu
+              </>
+            )}
+          </button>
         </div>
 
-        <nav className="flex gap-2 overflow-x-auto px-4 pb-4">
-          {menuItems.map((item) => {
-            const Icon = item.icon;
-            const isActive =
-              pathname === item.href ||
-              (item.href !== "/admin" && pathname.startsWith(item.href));
+        {mobileMenuOpen && (
+          <nav className="grid gap-2 border-t border-teal-500 px-4 py-4">
+            {menuItems.map((item) => {
+              const Icon = item.icon;
+              const isActive =
+                pathname === item.href ||
+                (item.href !== "/admin" && pathname.startsWith(item.href));
 
-            return (
-              <Link
-                key={item.href}
-                href={item.href}
-                className={`flex shrink-0 items-center gap-2 rounded-lg px-3 py-2 text-sm font-semibold ${
-                  isActive
-                    ? "bg-teal-800 text-white"
-                    : "bg-teal-500 text-teal-50"
-                }`}
-              >
-                <Icon className="h-4 w-4" />
-                <span>{item.label}</span>
-              </Link>
-            );
-          })}
-        </nav>
+              return (
+                <Link
+                  key={item.href}
+                  href={item.href}
+                  onClick={() => setMobileMenuOpen(false)}
+                  className={`flex items-center gap-3 rounded-lg px-3 py-3 text-sm font-semibold ${
+                    isActive
+                      ? "bg-teal-800 text-white"
+                      : "bg-teal-500 text-teal-50"
+                  }`}
+                >
+                  <Icon className="h-4 w-4" />
+                  <span>{item.label}</span>
+                </Link>
+              );
+            })}
+          </nav>
+        )}
       </div>
     </>
   );
