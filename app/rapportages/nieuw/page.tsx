@@ -114,7 +114,7 @@ export default async function NewReportPage({
     return (
       <main className="min-h-screen bg-slate-100">
         <header className="border-b border-slate-200 bg-white">
-          <div className="mx-auto flex max-w-6xl items-center justify-between px-8 py-4">
+          <div className="mx-auto flex max-w-6xl flex-col gap-3 px-4 py-4 sm:px-6 md:flex-row md:items-center md:justify-between lg:px-8">
             <div>
               <p className="text-sm font-medium text-slate-500">
                 010 op niveau
@@ -133,7 +133,7 @@ export default async function NewReportPage({
           </div>
         </header>
 
-        <div className="mx-auto max-w-3xl px-8 py-8">
+        <div className="mx-auto max-w-3xl px-4 py-5 sm:px-6 lg:px-8 lg:py-8">
           <div className="rounded-xl border border-slate-200 bg-white p-6">
             <h2 className="text-lg font-semibold text-slate-900">
               Geen actieve rapportageperiode
@@ -150,7 +150,7 @@ export default async function NewReportPage({
   return (
     <main className="min-h-screen bg-slate-100">
       <header className="border-b border-slate-200 bg-white">
-        <div className="mx-auto flex max-w-6xl items-center justify-between px-8 py-4">
+        <div className="mx-auto flex max-w-6xl flex-col gap-3 px-4 py-4 sm:px-6 md:flex-row md:items-center md:justify-between lg:px-8">
           <div>
             <p className="text-sm font-medium text-slate-500">010 op niveau</p>
             <h1 className="text-xl font-semibold text-slate-900">
@@ -167,7 +167,7 @@ export default async function NewReportPage({
         </div>
       </header>
 
-      <div className="mx-auto max-w-3xl px-8 py-8">
+      <div className="mx-auto max-w-3xl px-4 py-5 sm:px-6 lg:px-8 lg:py-8">
         <div className="mb-4">
           <Link href="/docent" className="text-sm font-medium text-slate-600">
             ← Terug naar dashboard
