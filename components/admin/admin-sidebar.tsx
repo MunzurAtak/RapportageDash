@@ -2,13 +2,25 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { CalendarDays, ClipboardList, GraduationCap, Home, Users } from "lucide-react";
+import {
+  CalendarDays,
+  ClipboardList,
+  GraduationCap,
+  Home,
+  UserPlus,
+  Users,
+} from "lucide-react";
 
 const menuItems = [
   {
     label: "Home",
     href: "/admin",
     icon: Home,
+  },
+  {
+    label: "Aanmeldingen",
+    href: "/admin/registrations",
+    icon: UserPlus,
   },
   {
     label: "Bijlesdocenten & Personeel",

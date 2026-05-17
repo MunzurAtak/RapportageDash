@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { FormEvent, useState } from "react";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
@@ -129,6 +130,19 @@ export default function LoginPage() {
           >
             {loading ? "Inloggen..." : "Inloggen"}
           </button>
+
+          <div className="flex items-center justify-between pt-2 text-sm">
+            <Link href="/register" className="font-medium text-slate-700 hover:text-slate-900">
+              Registreren
+            </Link>
+
+            <Link
+              href="/forgot-password"
+              className="font-medium text-slate-700 hover:text-slate-900"
+            >
+              Wachtwoord vergeten?
+            </Link>
+          </div>
         </form>
       </div>
     </main>
