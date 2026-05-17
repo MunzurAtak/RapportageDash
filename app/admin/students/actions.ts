@@ -72,3 +72,60 @@ export async function createStudent(formData: FormData) {
   revalidatePath("/docent");
   redirect("/admin/students");
 }
+
+export async function updateStudent(formData: FormData) {
+  const supabase = await requireAdmin();
+
+  const studentId = String(formData.get("studentId") ?? "");
+  const fullName = String(formData.get("fullName") ?? "").trim();
+  const gradeLevel = String(formData.get("gradeLevel") ?? "").trim();
+  const status = String(formData.get("status") ?? "active");
+  const reportingRequired = formData.get("reportingRequired") === "on";
+  const responsibleTutorId = String(formData.get("responsibleTutorId") ?? "");
+
+  if (!studentId || !fullName || !gradeLevel || !responsibleTutorId) {
+    redirect(`/admin/students/${studentId}/edit?error=missing-fields`);
+  }
+
+  const { error: studentError } = await supabase
+    .from("students")
+    .update({
+      full_name: fullName,
+      grade_level: gradeLevel,
+      status,
+      reporting_required: reportingRequired,
+    })
+    .eq("id", studentId);
+
+  if (studentError) {
+    console.error(studentError);
+    redirect(`/admin/students/${studentId}/edit?error=update-failed`);
+  }
+
+  const { error: deleteLinksError } = await supabase
+    .from("student_tutors")
+    .delete()
+    .eq("student_id", studentId);
+
+  if (deleteLinksError) {
+    console.error(deleteLinksError);
+    redirect(`/admin/students/${studentId}/edit?error=link-update-failed`);
+  }
+
+  const { error: insertLinkError } = await supabase
+    .from("student_tutors")
+    .insert({
+      student_id: studentId,
+      tutor_id: responsibleTutorId,
+      is_responsible: true,
+    });
+
+  if (insertLinkError) {
+    console.error(insertLinkError);
+    redirect(`/admin/students/${studentId}/edit?error=link-update-failed`);
+  }
+
+  revalidatePath("/admin/students");
+  revalidatePath("/docent");
+  redirect("/admin/students");
+}
