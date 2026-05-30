@@ -114,12 +114,21 @@ export default async function AdminStudentsPage() {
             </p>
           </div>
 
-          <Link
-            href="/admin/students/new"
-            className="inline-flex w-full justify-center rounded-lg bg-teal-600 px-4 py-2.5 text-sm font-semibold text-white hover:bg-teal-700 sm:w-auto"
-          >
-            + Nieuw toevoegen
-          </Link>
+          <div className="flex flex-col gap-2 sm:flex-row">
+            <Link
+              href="/admin/import/students"
+              className="inline-flex w-full justify-center rounded-lg border border-slate-300 bg-white px-4 py-2.5 text-sm font-semibold text-slate-700 hover:bg-slate-50 sm:w-auto"
+            >
+              CSV importeren
+            </Link>
+
+            <Link
+              href="/admin/students/new"
+              className="inline-flex w-full justify-center rounded-lg bg-teal-600 px-4 py-2.5 text-sm font-semibold text-white hover:bg-teal-700 sm:w-auto"
+            >
+              + Nieuw toevoegen
+            </Link>
+          </div>
         </div>
 
         {error && (
