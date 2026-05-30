@@ -9,6 +9,7 @@ export default function LoginPage() {
   const router = useRouter();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [rememberMe, setRememberMe] = useState(true);
   const [errorMessage, setErrorMessage] = useState("");
   const [loading, setLoading] = useState(false);
 
@@ -116,6 +117,16 @@ export default function LoginPage() {
               placeholder="••••••••"
             />
           </div>
+
+          <label className="flex items-center gap-3 rounded-lg border border-slate-200 p-3">
+            <input
+              type="checkbox"
+              checked={rememberMe}
+              onChange={(event) => setRememberMe(event.target.checked)}
+              className="h-4 w-4"
+            />
+            <span className="text-sm text-slate-700">Ingelogd blijven</span>
+          </label>
 
           {errorMessage && (
             <p className="rounded-lg bg-red-50 px-3 py-2 text-sm text-red-700">
