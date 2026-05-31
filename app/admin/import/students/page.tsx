@@ -2,6 +2,7 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { AdminShell } from "@/components/admin/admin-shell";
+import { SubmitButton } from "@/components/ui/submit-button";
 import { importStudentsFromCsv } from "./actions";
 
 type ImportStudentsPageProps = {
@@ -151,12 +152,12 @@ export default async function ImportStudentsPage({
               />
             </div>
 
-            <button
-              type="submit"
+            <SubmitButton
+              pendingText="Importeren..."
               className="w-full rounded-lg bg-teal-600 px-4 py-3 text-sm font-semibold text-white hover:bg-teal-700 sm:w-auto"
             >
               Import starten
-            </button>
+            </SubmitButton>
           </form>
         </section>
 

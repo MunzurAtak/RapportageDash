@@ -2,6 +2,7 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { AdminShell } from "@/components/admin/admin-shell";
+import { SubmitButton } from "@/components/ui/submit-button";
 import { activatePeriod } from "./actions";
 
 export default async function AdminPeriodsPage() {
@@ -145,12 +146,12 @@ export default async function AdminPeriodsPage() {
                     ) : (
                       <form action={activatePeriod}>
                         <input type="hidden" name="periodId" value={period.id} />
-                        <button
-                          type="submit"
+                        <SubmitButton
+                          pendingText="Activeren..."
                           className="rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm font-medium text-slate-700 hover:bg-slate-50"
                         >
                           Actief maken
-                        </button>
+                        </SubmitButton>
                       </form>
                     )}
                   </td>

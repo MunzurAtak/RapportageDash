@@ -2,6 +2,7 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { AdminShell } from "@/components/admin/admin-shell";
+import { SubmitButton } from "@/components/ui/submit-button";
 import { createTutor } from "../actions";
 
 type NewTutorPageProps = {
@@ -153,12 +154,12 @@ export default async function NewTutorPage({ searchParams }: NewTutorPageProps) 
             <span className="text-sm text-slate-700">Account actief</span>
           </label>
 
-          <button
-            type="submit"
-            className="rounded-lg bg-teal-600 px-4 py-2.5 text-sm font-semibold text-white hover:bg-teal-700"
+          <SubmitButton
+            pendingText="Bijlesdocent toevoegen..."
+            className="w-full rounded-lg bg-teal-600 px-4 py-2.5 text-sm font-semibold text-white hover:bg-teal-700 sm:w-auto"
           >
             Bijlesdocent toevoegen
-          </button>
+          </SubmitButton>
         </form>
       </section>
     </AdminShell>

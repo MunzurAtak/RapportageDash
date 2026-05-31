@@ -2,6 +2,7 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { AdminShell } from "@/components/admin/admin-shell";
+import { SubmitButton } from "@/components/ui/submit-button";
 import { archiveStudent, updateStudent } from "../../actions";
 
 type EditStudentPageProps = {
@@ -242,12 +243,12 @@ export default async function EditStudentPage({
             </select>
           </div>
 
-          <button
-            type="submit"
-            className="rounded-lg bg-teal-600 px-4 py-2.5 text-sm font-semibold text-white hover:bg-teal-700"
+          <SubmitButton
+            pendingText="Opslaan..."
+            className="w-full rounded-lg bg-teal-600 px-4 py-2.5 text-sm font-semibold text-white hover:bg-teal-700 sm:w-auto"
           >
             Wijzigingen opslaan
-          </button>
+          </SubmitButton>
         </form>
 
         <div className="mt-8 border-t border-slate-200 pt-6">
@@ -261,12 +262,12 @@ export default async function EditStudentPage({
 
           <form action={archiveStudent} className="mt-4">
             <input type="hidden" name="studentId" value={student.id} />
-            <button
-              type="submit"
-              className="rounded-lg bg-red-600 px-4 py-2.5 text-sm font-semibold text-white hover:bg-red-700"
+            <SubmitButton
+              pendingText="Archiveren..."
+              className="w-full rounded-lg bg-red-600 px-4 py-2.5 text-sm font-semibold text-white hover:bg-red-700 sm:w-auto"
             >
               Leerling archiveren
-            </button>
+            </SubmitButton>
           </form>
         </div>
       </section>

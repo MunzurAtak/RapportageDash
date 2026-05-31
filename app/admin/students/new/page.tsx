@@ -2,6 +2,7 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { AdminShell } from "@/components/admin/admin-shell";
+import { SubmitButton } from "@/components/ui/submit-button";
 import { createStudent } from "../actions";
 
 type NewStudentPageProps = {
@@ -177,12 +178,12 @@ export default async function NewStudentPage({
             )}
           </div>
 
-          <button
-            type="submit"
-            className="rounded-lg bg-teal-600 px-4 py-2.5 text-sm font-semibold text-white hover:bg-teal-700"
+          <SubmitButton
+            pendingText="Leerling toevoegen..."
+            className="w-full rounded-lg bg-teal-600 px-4 py-2.5 text-sm font-semibold text-white hover:bg-teal-700 sm:w-auto"
           >
             Leerling toevoegen
-          </button>
+          </SubmitButton>
         </form>
       </section>
     </AdminShell>

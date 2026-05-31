@@ -2,6 +2,7 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { AdminShell } from "@/components/admin/admin-shell";
+import { SubmitButton } from "@/components/ui/submit-button";
 import { archiveTutor, updateTutor } from "../../actions";
 
 type EditTutorPageProps = {
@@ -226,12 +227,12 @@ export default async function EditTutorPage({
               <span className="text-sm text-slate-700">Account actief</span>
             </label>
 
-            <button
-              type="submit"
-              className="rounded-lg bg-teal-600 px-4 py-2.5 text-sm font-semibold text-white hover:bg-teal-700"
+            <SubmitButton
+              pendingText="Opslaan..."
+              className="w-full rounded-lg bg-teal-600 px-4 py-2.5 text-sm font-semibold text-white hover:bg-teal-700 sm:w-auto"
             >
               Wijzigingen opslaan
-            </button>
+            </SubmitButton>
           </form>
 
           <div className="mt-8 border-t border-slate-200 pt-6">
@@ -246,12 +247,12 @@ export default async function EditTutorPage({
 
             <form action={archiveTutor} className="mt-4">
               <input type="hidden" name="tutorId" value={tutor.id} />
-              <button
-                type="submit"
-                className="rounded-lg bg-red-600 px-4 py-2.5 text-sm font-semibold text-white hover:bg-red-700"
+              <SubmitButton
+                pendingText="Archiveren..."
+                className="w-full rounded-lg bg-red-600 px-4 py-2.5 text-sm font-semibold text-white hover:bg-red-700 sm:w-auto"
               >
                 Bijlesdocent archiveren
-              </button>
+              </SubmitButton>
             </form>
           </div>
         </section>
