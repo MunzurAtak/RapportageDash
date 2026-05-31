@@ -65,7 +65,7 @@ export default async function NewStudentPage({
   const { data: tutors } = await supabase
     .from("profiles")
     .select("id, full_name, email")
-    .eq("role", "tutor")
+    .in("role", ["tutor", "coordinator", "admin"])
     .eq("active", true)
     .order("full_name", { ascending: true });
 

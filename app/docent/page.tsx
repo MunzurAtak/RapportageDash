@@ -32,10 +32,6 @@ export default async function DocentPage() {
     redirect("/account-inactief?reason=inactive");
   }
 
-  if (profile.role === "admin" || profile.role === "coordinator") {
-    redirect("/admin");
-  }
-
   const { data: activePeriod } = await supabase
     .from("report_periods")
     .select("id, name, deadline")
@@ -94,10 +90,19 @@ export default async function DocentPage() {
             </h1>
           </div>
 
-          <div className="flex items-center gap-4">
+          <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
             <p className="text-sm text-slate-600">
               {profile.full_name} · {profile.role}
             </p>
+            {(profile.role === "admin" || profile.role === "coordinator") && (
+              <Link
+                href="/admin"
+                className="rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm font-medium text-slate-700 hover:bg-slate-50"
+              >
+                Naar admin
+              </Link>
+            )}
+
             <LogoutButton />
           </div>
         </div>

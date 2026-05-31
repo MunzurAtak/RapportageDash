@@ -51,10 +51,6 @@ export async function submitReport(formData: FormData) {
     redirect("/account-inactief?reason=inactive");
   }
 
-  if (profile.role === "admin" || profile.role === "coordinator") {
-    redirect("/admin");
-  }
-
   const { data: activePeriod } = await supabase
     .from("report_periods")
     .select("id, name, deadline")

@@ -7,6 +7,7 @@ import {
   ChevronLeft,
   ChevronRight,
   ClipboardList,
+  FilePenLine,
   GraduationCap,
   Home,
   Menu,
@@ -21,6 +22,11 @@ const menuItems = [
     label: "Home",
     href: "/admin",
     icon: Home,
+  },
+  {
+    label: "Mijn rapportages",
+    href: "/docent",
+    icon: FilePenLine,
   },
   {
     label: "Aanmeldingen",
