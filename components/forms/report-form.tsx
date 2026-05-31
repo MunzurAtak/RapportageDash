@@ -2,6 +2,7 @@
 
 import { useMemo, useState } from "react";
 import { submitReport } from "@/app/rapportages/actions";
+import { SubmitButton } from "@/components/ui/submit-button";
 
 type StudentOption = {
   id: string;
@@ -207,12 +208,12 @@ export function ReportForm({
           </div>
         </div>
 
-        <button
-          type="submit"
+        <SubmitButton
+          pendingText="Rapportage indienen..."
           className="w-full rounded-lg bg-slate-900 px-4 py-3 text-sm font-medium text-white hover:bg-slate-700 sm:w-auto sm:py-2.5"
         >
           Rapportage indienen
-        </button>
+        </SubmitButton>
       </form>
     </div>
   );

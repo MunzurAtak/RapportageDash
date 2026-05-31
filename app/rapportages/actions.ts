@@ -114,6 +114,11 @@ export async function submitReport(formData: FormData) {
 
   if (error) {
     console.error(error);
+
+    if (error.code === "23505") {
+      redirect(`${errorUrl}&error=already-submitted`);
+    }
+
     redirect(`${errorUrl}&error=insert-failed`);
   }
 
