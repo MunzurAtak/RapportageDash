@@ -1,6 +1,7 @@
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { AdminShell } from "@/components/admin/admin-shell";
+import { sendReportReminders } from "./reminders/actions";
 
 type RelatedStudent = {
   id: string;
@@ -38,7 +39,61 @@ function single<T>(value: T | T[] | null): T | null {
   return value;
 }
 
-export default async function AdminPage() {
+type AdminPageProps = {
+  searchParams: Promise<{
+    reminders?: string;
+    count?: string;
+    error?: string;
+  }>;
+};
+
+function getDashboardMessage(params: {
+  reminders?: string;
+  count?: string;
+  error?: string;
+}) {
+  if (params.reminders === "sent") {
+    return {
+      type: "success",
+      text: `Herinneringen verstuurd naar ${params.count ?? "0"} docent(en).`,
+    };
+  }
+
+  if (params.reminders === "none") {
+    return {
+      type: "success",
+      text: "Er ontbreken geen rapportages. Er zijn geen herinneringen verstuurd.",
+    };
+  }
+
+  if (params.error === "missing-resend-key") {
+    return {
+      type: "error",
+      text: "RESEND_API_KEY ontbreekt. Voeg deze toe aan de environment variables.",
+    };
+  }
+
+  if (params.error === "no-active-period") {
+    return {
+      type: "error",
+      text: "Er is geen actieve periode ingesteld.",
+    };
+  }
+
+  if (params.error === "reminder-send-failed") {
+    return {
+      type: "error",
+      text: "Herinneringen konden niet worden verstuurd.",
+    };
+  }
+
+  return null;
+}
+
+export default async function AdminPage({ searchParams }: AdminPageProps) {
+  const params = await searchParams;
+  const dashboardMessage = getDashboardMessage(params);
+
   const supabase = await createClient();
 
   const {
@@ -154,6 +209,18 @@ export default async function AdminPage() {
       subtitle="Overzicht van rapportages en openstaande acties."
       userLabel={`${profile.full_name} · ${profile.role}`}
     >
+      {dashboardMessage && (
+        <div
+          className={`mb-6 rounded-lg px-4 py-3 text-sm ${
+            dashboardMessage.type === "success"
+              ? "bg-green-50 text-green-800"
+              : "bg-red-50 text-red-700"
+          }`}
+        >
+          {dashboardMessage.text}
+        </div>
+      )}
+
       <div className="mb-6 rounded-xl border border-slate-200 bg-white p-5">
         <p className="text-sm text-slate-500">Actieve rapportageperiode</p>
         <p className="mt-1 text-lg font-semibold text-slate-900">
@@ -197,14 +264,26 @@ export default async function AdminPage() {
       </div>
 
       <section className="mt-8 rounded-xl border border-slate-200 bg-white">
-        <div className="border-b border-slate-200 px-6 py-5">
-          <h2 className="text-lg font-semibold text-slate-900">
-            Actielijst ontbrekende rapportages
-          </h2>
-          <p className="mt-1 text-sm text-slate-600">
-            Leerlingen waarvoor de verantwoordelijke bijlesdocent nog geen
-            rapportage heeft ingediend.
-          </p>
+        <div className="flex flex-col gap-4 border-b border-slate-200 px-6 py-5 lg:flex-row lg:items-center lg:justify-between">
+          <div>
+            <h2 className="text-lg font-semibold text-slate-900">
+              Actielijst ontbrekende rapportages
+            </h2>
+            <p className="mt-1 text-sm text-slate-600">
+              Leerlingen waarvoor de verantwoordelijke bijlesdocent nog geen
+              rapportage heeft ingediend.
+            </p>
+          </div>
+
+          <form action={sendReportReminders}>
+            <button
+              type="submit"
+              disabled={!activePeriod || missingReports.length === 0}
+              className="w-full rounded-lg bg-teal-600 px-4 py-2.5 text-sm font-semibold text-white hover:bg-teal-700 disabled:cursor-not-allowed disabled:bg-slate-300 lg:w-auto"
+            >
+              Herinneringen sturen
+            </button>
+          </form>
         </div>
 
         {/* Mobile cards */}
